@@ -1,13 +1,19 @@
 package handlers
 
 import (
-	"blogging-platform-api/internal/models"
 	"encoding/json"
 	"net/http"
 )
 
+type Post struct {
+	Title    string   `json:"title"`
+	Content  string   `json:"content"`
+	Category string   `json:"category"`
+	Tags     []string `json:"tags"`
+}
+
 func GetPosts(w http.ResponseWriter, r *http.Request) {
-	posts := []models.Post_Payload{
+	posts := []Post{
 		{Title: "First Post", Content: "Hello world!", Category: "random", Tags: []string{"tech", "technology"}},
 	}
 	w.Header().Set("Content-Type", "application/json")
