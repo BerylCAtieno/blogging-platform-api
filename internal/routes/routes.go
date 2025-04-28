@@ -17,6 +17,7 @@ func SetupRoutes() *mux.Router {
 	postsRouter.HandleFunc("/{id}", blog.UpdatePost).Methods("PUT").Name("updatepost")
 	postsRouter.HandleFunc("/{id}", blog.PatchPost).Methods("PATCH").Name("patchpost")
 	postsRouter.HandleFunc("/{id}", blog.DeletePost).Methods("DELETE").Name("deletepost")
+	postsRouter.HandleFunc("/search", blog.SearchPosts).Methods("GET").Name("searchposts")
 
 	return router
 }

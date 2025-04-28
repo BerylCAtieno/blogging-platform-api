@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gorilla/mux"
 )
@@ -237,6 +238,52 @@ func DeletePost(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, "Post not found", http.StatusNotFound)
 }
 
-// filter blog posts by a search item
+// TODO: search api not working properly
 
-// filter by tag (including multiple tag combos)
+// filter blog posts by a search item and/or tags
+
+func SearchPosts(w http.ResponseWriter, r *http.Request) {
+	// Extract search parameters
+	searchTerm := r.URL.Query().Get("q")
+	tags := r.URL.Query()["tags"]
+
+	// Filter posts based on search term and tags
+	filteredPosts := filterPosts(posts, searchTerm, tags)
+
+	// Handle the case where no posts are found
+	if len(filteredPosts) == 0 {
+		http.Error(w, "No posts found matching the search criteria", http.StatusNotFound)
+		return
+	}
+
+	// Otherwise, return the filtered posts
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK) // Set 200 OK status
+	json.NewEncoder(w).Encode(filteredPosts)
+}
+
+func filterPosts(posts []Post, searchTerm string, tags []string) []Post {
+	var result []Post
+
+	for _, post := range posts {
+		matchSearchTerm := searchTerm == "" || strings.Contains(post.Title, searchTerm) || strings.Contains(post.Content, searchTerm)
+		matchTags := len(tags) == 0 || containsAny(post.Tags, tags)
+
+		if matchSearchTerm && matchTags {
+			result = append(result, post)
+		}
+	}
+
+	return result
+}
+
+func containsAny(tags []string, searchTags []string) bool {
+	for _, tag := range searchTags {
+		for _, postTag := range tags {
+			if postTag == tag {
+				return true
+			}
+		}
+	}
+	return false
+}
