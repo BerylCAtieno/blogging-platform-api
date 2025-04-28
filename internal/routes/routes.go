@@ -11,12 +11,12 @@ func SetupRoutes() *mux.Router {
 
 	postsRouter := router.PathPrefix("/posts").Subrouter()
 
-	postsRouter.HandleFunc("", blog.GetPosts).Methods("GET")
-	postsRouter.HandleFunc("", blog.CreatePost).Methods("POST")
-	postsRouter.HandleFunc("/{id}", blog.GetPostById).Methods("GET")
-	postsRouter.HandleFunc("/{id}", blog.UpdatePost).Methods("PUT")
-	postsRouter.HandleFunc("/{id}", blog.PatchPost).Methods("PATCH")
-	postsRouter.HandleFunc("/{id}", blog.DeletePost).Methods("DELETE")
+	postsRouter.HandleFunc("", blog.GetPosts).Methods("GET").Name("getposts")
+	postsRouter.HandleFunc("", blog.CreatePost).Methods("POST").Name("createpost")
+	postsRouter.HandleFunc("/{id}", blog.GetPostById).Methods("GET").Name("getpostbyid")
+	postsRouter.HandleFunc("/{id}", blog.UpdatePost).Methods("PUT").Name("updatepost")
+	postsRouter.HandleFunc("/{id}", blog.PatchPost).Methods("PATCH").Name("patchpost")
+	postsRouter.HandleFunc("/{id}", blog.DeletePost).Methods("DELETE").Name("deletepost")
 
 	return router
 }
