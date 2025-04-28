@@ -8,12 +8,15 @@ import (
 
 func SetupRoutes() *mux.Router {
 	router := mux.NewRouter()
-	router.HandleFunc("/posts", blog.GetPosts).Methods("GET")
-	router.HandleFunc("/posts/{id}", blog.GetPostById).Methods("GET")
-	router.HandleFunc("/posts", blog.CreatePost).Methods("POST")
-	router.HandleFunc("/posts", blog.UpdatePost).Methods("PUT")
-	router.HandleFunc("/posts", blog.PatchPost).Methods("PATCH")
-	router.HandleFunc("/posts", blog.DeletePost).Methods("DELETE")
+
+	postsRouter := router.PathPrefix("/posts").Subrouter()
+
+	postsRouter.HandleFunc("", blog.GetPosts).Methods("GET")
+	postsRouter.HandleFunc("", blog.CreatePost).Methods("POST")
+	postsRouter.HandleFunc("/{id}", blog.GetPostById).Methods("GET")
+	postsRouter.HandleFunc("/{id}", blog.UpdatePost).Methods("PUT")
+	postsRouter.HandleFunc("/{id}", blog.PatchPost).Methods("PATCH")
+	postsRouter.HandleFunc("/{id}", blog.DeletePost).Methods("DELETE")
 
 	return router
 }

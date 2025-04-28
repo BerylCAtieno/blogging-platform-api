@@ -16,7 +16,7 @@ type Post struct {
 	Tags     []string `json:"tags"`
 }
 
-// Temporary
+// TODO: (Delete this after implementing db) Temporary
 
 var posts = []Post{} // dummy in-memory post store
 var nextID = 1       // simple auto-increment ID
@@ -46,7 +46,7 @@ func GetPostById(w http.ResponseWriter, r *http.Request) {
 	idStr, ok := vars["id"]
 
 	if !ok {
-		http.Error(w, "Missing id parameter", http.StatusBadRequest)
+		http.Error(w, "Missing id path", http.StatusBadRequest)
 		return
 	}
 
@@ -67,7 +67,7 @@ func GetPostById(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, "Post not found", http.StatusNotFound)
 }
 
-// handler to create new blog post
+// create new blog post
 
 func CreatePost(w http.ResponseWriter, r *http.Request) {
 
@@ -92,7 +92,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(newPost)
 }
 
-// api handler to update an existing post
+// update an existing post
 
 func UpdatePost(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPut {
@@ -100,9 +100,11 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	idStr := r.URL.Query().Get("id")
-	if idStr == "" {
-		http.Error(w, "Missing id parameter", http.StatusBadRequest)
+	vars := mux.Vars(r)
+
+	idStr, ok := vars["id"]
+	if !ok {
+		http.Error(w, "Missing id path", http.StatusBadRequest)
 		return
 	}
 
@@ -143,10 +145,11 @@ func PatchPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Get ID from query param
-	idStr := r.URL.Query().Get("id")
-	if idStr == "" {
-		http.Error(w, "Missing id parameter", http.StatusBadRequest)
+	vars := mux.Vars(r)
+
+	idStr, ok := vars["id"]
+	if !ok {
+		http.Error(w, "Missing id path", http.StatusBadRequest)
 		return
 	}
 
@@ -206,9 +209,11 @@ func DeletePost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Parse id from query: /posts?id=2
-	idStr := r.URL.Query().Get("id")
-	if idStr == "" {
-		http.Error(w, "Missing id parameter", http.StatusBadRequest)
+	vars := mux.Vars(r)
+
+	idStr, ok := vars["id"]
+	if !ok {
+		http.Error(w, "Missing id path", http.StatusBadRequest)
 		return
 	}
 
