@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
 type Post struct {
@@ -38,9 +40,12 @@ func GetPostById(w http.ResponseWriter, r *http.Request) {
 		{ID: 2, Title: "Second Post", Content: "Hello world Again!", Category: "technology", Tags: []string{"new", "science"}},
 	}
 
-	// Extract "id" from query parameter: /post?id=1
-	idStr := r.URL.Query().Get("id")
-	if idStr == "" {
+	// Extract "id" from path parameter: /posts/{id}
+
+	vars := mux.Vars(r)
+	idStr, ok := vars["id"]
+
+	if !ok {
 		http.Error(w, "Missing id parameter", http.StatusBadRequest)
 		return
 	}
@@ -51,7 +56,6 @@ func GetPostById(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Find post by id
 	for _, post := range posts {
 		if post.ID == id {
 			w.Header().Set("Content-Type", "application/json")
@@ -60,7 +64,6 @@ func GetPostById(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// If not found
 	http.Error(w, "Post not found", http.StatusNotFound)
 }
 
